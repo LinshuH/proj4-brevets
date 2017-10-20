@@ -57,9 +57,5 @@ ACP rules and one that does not.
 
 ## Replace this README
 
-This README is currently written primarily as instructions to CIS 322
-students.  Replace it with a proper README for an ACP time
-calculator.  Think about what should be included for users and for
-developers.  If it is growing too long, factor details into one or
-more separate documents, with references from the README.
+## I delete this part
 
