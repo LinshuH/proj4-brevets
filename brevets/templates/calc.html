@@ -127,9 +127,16 @@
     var km = control.find("input[name='km']").val();                         // get the id km, even though we also has data in unit miles, we only pass the km to the python file.
     var brevet_dist_km = control.find("input[name='brevet_dist_km']").val(); //dropdown list
     // create a new timestamp key(id) at here, which combine date and time key together. then, on the next line, shows this key.
-    var begin_date = $('input#begin_date').val().format("YYYY-MM-DD");
-    var begin_time = $('input#begin_time').val().format("HH:mm");
-    var brevet_start_time = moment(begin_date + ' ' + begin_time, 'DD/MM/YYYY HH:mm');
+
+    //var begin_date = control.find("input[name='begin_date']").val();
+    //var begin_time = control.find("input[name='begin_time']").val();
+
+    var begin_date = $("#begin_date").val();
+    var begin_time = $("#begin_time").val();
+
+    console.log("This is begin_date: "+begin_date+ " ; this is begin_time: "+begin_time);
+    var brevet_start_time = moment(begin_date + ' ' + begin_time+ ":00").format();
+    console.log("This is brevet_start_time "+brevet_start_time);
     
     /*The things I want to get is acutally only the value, so I don't need to care about combining key together, 
      *I just need to take care the value, and how to determine that key? should it has to be id that defined before? or this id actually is the things communicate between the javascript and python?
@@ -141,7 +148,7 @@
     var open_time_field = control.find("input[name='open']");
     var close_time_field = control.find("input[name='close']");
     
-    $.getJSON(TIME_CALC_URL, { km: km }, {brevet_dist_km: brevet_dist_km}, {brevet_start_time: brevet_start_time}
+    $.getJSON(TIME_CALC_URL, { km: km, brevet_dist_km: brevet_dist_km, brevet_start_time: brevet_start_time},
       // anythings on the line above are the data that sand to the server(py file) and any thing in the function(data), data are the information get back to the client.
       // on the {km:km} the first km is the id of the variable(defined in html with id = ..., and second km is the value, that defined at line 127
       function(data) {

@@ -34,22 +34,28 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     brevet_dist_km = flask.request.args.get("km", type=float)
     """
     # use the speed, create another dictionary, calculate the time it need to pass this control point. 
-    speed_dic = [(200:34), (400:32), (600: 30), (1000: 28), (1300: 26)]
-    time_dic = [(200:200/34), (400:400/32), (600:600/30), (1000:1000/28), (1300:1300/26)]
-    control_time = 0
+    speed_dic = {"200":34, "400":32, "600": 30, "1000": 28, "1300":26}
+    time_dic = {"200":200/34, "400":100/32, "600":200/30, "1000":400/28, "1300":300/26}
 
-    for i in range (time_dic.length()):        # go to each pair in dictionary
-      if (time_dic.key()[i] < control_dist_km):  # check the key value of the pair
-        control_time += time_dic.value()[j]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
-      else:
-        addition_time = (speed_dic.key()[i] - control_dist_km) / speed_dic.value()[i]
-        total_time = control_time + addition_time
-        break
+    # go to each pair in dictionary
+    for i in range (len(time_dic)):
+      if (int(time_dic.key()[i]) <= brevet_dist_km):
+          if (int(time_dic.key()[i]) <= control_dist_km):  # check the key value of the pair
+              control_time += time_dic.value()[j]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
+          else:
+              addition_time = (int(speed_dic.key()[i]) - control_dist_km) / speed_dic.value()[i]
+              total_time = control_time + addition_time
+            # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
+     
+    control_open = brevet_start_time + timedelta(hours=total_time)
 
-
-    open_time = brevet_start_time + timedelta(hours=total_time)
-
-    return open_time
+    return control_open
+    #take starttime, turn to the arrow object,
+    #open_tim = arrow.get(brevet_start_time)
+    # open_tim.shift(hours=+total_time)
+    #open_tim.isoformat()
+    
+    #dictionary will not sort the key by index, use a key arraylist instead.
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -65,4 +71,21 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
-    return arrow.now().isoformat()
+    speed_dic = {"200":15, "300":15, "400":15, "600":15, "1000":11.428, "1300":13.333}
+    time_dic = {"200":200/15, "300":100/15, "400":100/15, "600":200/15, "1000":400/11.428, "1300":300/13.333}
+    overall_time_dic = {"200":13.5, "300":20, "400":27, "600":40, "1000":75}
+    
+    
+    
+    for i in range (len(time_dic)):
+      if (int(time_dic.key()[i]) < brevet_dist_km):
+          if (int(time_dic.key()[i]) <= control_dist_km):  # check the key value of the pair
+              control_time += time_dic.value()[j]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
+          else:
+              addition_time = (int(speed_dic.key()[i]) - control_dist_km) / speed_dic.value()[i]
+              total_time = control_time + addition_time
+            # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
+      elif (control_dist_km == brevet_dist_km):
+          total_time = overall_time_dic.value()[i]
+    control_close = brevet_start_time + timedelta(hours=total_time)
+    return control_close
