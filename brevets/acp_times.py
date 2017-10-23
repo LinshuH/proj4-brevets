@@ -29,22 +29,20 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An "ISO 8601 format" date string indicating the control open time.
        This will be in the "same time zone" as the brevet start time.
     """
-    """
-    control_dist_km = flask.request.args.get("km", type=float)
-    brevet_dist_km = flask.request.args.get("km", type=float)
-    """
+   
     # use the speed, create another dictionary, calculate the time it need to pass this control point. 
-    speed_dic = {"200":34, "400":32, "600": 30, "1000": 28, "1300":26}
-    time_dic = {"200":200/34, "400":100/32, "600":200/30, "1000":400/28, "1300":300/26}
+    speed_dic = {"0":34,"200":34, "400":32, "600": 30, "1000": 28, "1300":26}
+    time_dic = {"0":0, "200":200/34, "400":100/32, "600":200/30, "1000":400/28, "1300":300/26}
+    control_point = [0,200,400,600,1000,1300]
 
     # go to each pair in dictionary
     for i in range (len(time_dic)):
-      if (int(time_dic.key()[i]) <= brevet_dist_km):
-          if (int(time_dic.key()[i]) <= control_dist_km):  # check the key value of the pair
-              control_time += time_dic.value()[j]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
+      if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
+          if (control_point[i] <= control_dist_km):  # check the key value of the pair
+              control_time += time_dic[srt(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
           else:
-              addition_time = (int(speed_dic.key()[i]) - control_dist_km) / speed_dic.value()[i]
-              total_time = control_time + addition_time
+              addition_time = (control_dist_km - control_point[i]) / speed_dic[str(i)]
+          total_time = control_time + addition_time
             # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
      
     control_open = brevet_start_time + timedelta(hours=total_time)
