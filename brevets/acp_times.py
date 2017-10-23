@@ -31,24 +31,37 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     """
    
     # use the speed, create another dictionary, calculate the time it need to pass this control point. 
-    speed_dic = {"0":34,"200":34, "400":32, "600": 30, "1000": 28, "1300":26}
+    speed_dic = {"0":34,"200":34, "400":32, "600":30, "1000":28, "1300":26}
     time_dic = {"0":0, "200":200/34, "400":100/32, "600":200/30, "1000":400/28, "1300":300/26}
     control_point = [0,200,400,600,1000,1300]
+    control_time = 0
+    addition_time = 0
+    total_time = 0
 
     # go to each pair in dictionary
     for i in range (len(time_dic)):
-      if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
-          if (control_point[i] <= control_dist_km):  # check the key value of the pair
-              control_time += time_dic[srt(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
-          else:
-              addition_time = (control_dist_km - control_point[i]) / speed_dic[str(i)]
-          total_time = control_time + addition_time
+        if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
+            print ("This is control point: "+ str(control_point[i]))
+            if (control_point[i] <= control_dist_km):  # check the key value of the pair
+                control_time += time_dic[str(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
+                print ("This is control time: "+ str(control_time))
+                print ("This is time_dict time: "+ str(time_dic[str(control_point[i])]))
+            else:
+                addition_time = (control_dist_km - control_point[i-1]) / speed_dic[str(control_point[i-1])]
+                print ("This is addition time: "+ str(addition_time))
+            total_time = control_time + addition_time
+            print ("This is total time: "+ str(total_time))
             # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
-     
-    control_open = brevet_start_time + timedelta(hours=total_time)
+    
+    #take starttime, turn to the arrow object,
+    control_open = arrow.get(brevet_start_time)
+    print ("This is the current time: "+control_open.isoformat())
+    control_open.rep(hours=+2)
+    print ("This is the current time2: "+control_open.isoformat())
+    control_open.isoformat()
 
     return control_open
-    #take starttime, turn to the arrow object,
+
     #open_tim = arrow.get(brevet_start_time)
     # open_tim.shift(hours=+total_time)
     #open_tim.isoformat()
