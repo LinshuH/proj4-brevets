@@ -38,35 +38,29 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     addition_time = 0
     total_time = 0
 
+
     # go to each pair in dictionary
     for i in range (len(time_dic)):
         if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
-            print ("This is control point: "+ str(control_point[i]))
             if (control_point[i] <= control_dist_km):  # check the key value of the pair
                 control_time += time_dic[str(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
                 print ("This is control time: "+ str(control_time))
                 print ("This is time_dict time: "+ str(time_dic[str(control_point[i])]))
             else:
-                addition_time = (control_dist_km - control_point[i-1]) / speed_dic[str(control_point[i-1])]
+                addition_time = (control_dist_km - control_point[i-1]) / speed_dic[str(control_point[i])]
                 print ("This is addition time: "+ str(addition_time))
             total_time = control_time + addition_time
             print ("This is total time: "+ str(total_time))
             # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
     
     #take starttime, turn to the arrow object,
-    control_open = arrow.get(brevet_start_time)
-    print ("This is the current time: "+control_open.isoformat())
-    control_open.rep(hours=+2)
+    open_t = arrow.get(brevet_start_time)
+    print ("This is the open_t: "+open_t.isoformat())
+    control_open = open_t.shift(hours=+total_time)
     print ("This is the current time2: "+control_open.isoformat())
     control_open.isoformat()
 
     return control_open
-
-    #open_tim = arrow.get(brevet_start_time)
-    # open_tim.shift(hours=+total_time)
-    #open_tim.isoformat()
-    
-    #dictionary will not sort the key by index, use a key arraylist instead.
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -82,11 +76,10 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
-    speed_dic = {"200":15, "300":15, "400":15, "600":15, "1000":11.428, "1300":13.333}
-    time_dic = {"200":200/15, "300":100/15, "400":100/15, "600":200/15, "1000":400/11.428, "1300":300/13.333}
-    overall_time_dic = {"200":13.5, "300":20, "400":27, "600":40, "1000":75}
-    
-    
+    speed_dic = {"0":15, "200":15, "300":15, "400":15, "600":15, "1000":11.428, "1300":13.333}
+    time_dic = {"0":0, "200":200/15, "300":100/15, "400":100/15, "600":200/15, "1000":400/11.428, "1300":300/13.333}
+    control_point = [0,200,400,600,1000,1300]
+    #fix_end = 
     
     for i in range (len(time_dic)):
       if (int(time_dic.key()[i]) < brevet_dist_km):
