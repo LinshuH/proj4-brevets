@@ -1,3 +1,4 @@
+
 """
 Open and close time calculations
 for ACP-sanctioned brevets
@@ -44,20 +45,16 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
         if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
             if (control_point[i] <= control_dist_km):  # check the key value of the pair
                 control_time += time_dic[str(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
-                print ("This is control time: "+ str(control_time))
-                print ("This is time_dict time: "+ str(time_dic[str(control_point[i])]))
+
             else:
                 addition_time = (control_dist_km - control_point[i-1]) / speed_dic[str(control_point[i])]
-                print ("This is addition time: "+ str(addition_time))
             total_time = control_time + addition_time
-            print ("This is total time: "+ str(total_time))
+
             # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
     
     #take starttime, turn to the arrow object,
     open_t = arrow.get(brevet_start_time)
-    print ("This is the open_t: "+open_t.isoformat())
     control_open = open_t.shift(hours=+total_time)
-    print ("This is the current time2: "+control_open.isoformat())
     control_open.isoformat()
 
     return control_open
@@ -76,20 +73,35 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
        An ISO 8601 format date string indicating the control close time.
        This will be in the same time zone as the brevet start time.
     """
-    speed_dic = {"0":15, "200":15, "300":15, "400":15, "600":15, "1000":11.428, "1300":13.333}
-    time_dic = {"0":0, "200":200/15, "300":100/15, "400":100/15, "600":200/15, "1000":400/11.428, "1300":300/13.333}
-    control_point = [0,200,400,600,1000,1300]
-    #fix_end = 
+    speed_dic = {"0":15, "200":15, "300":15, "400":15, "600":15, "1000":11.428}
+    time_dic = {"0":0, "200":200/15, "300":100/15, "400":100/15, "600":200/15, "1000":400/11.428}
+    control_point = [0,200,300,400,600,1000]
+    fix_end = {"0":1, "200":13.5, "300":20, "400":27, "600":40, "1000":75}
+    control_time = 0
+    addition_time = 0
+    total_time = 0
     
-    for i in range (len(time_dic)):
-      if (int(time_dic.key()[i]) < brevet_dist_km):
-          if (int(time_dic.key()[i]) <= control_dist_km):  # check the key value of the pair
-              control_time += time_dic.value()[j]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
-          else:
-              addition_time = (int(speed_dic.key()[i]) - control_dist_km) / speed_dic.value()[i]
-              total_time = control_time + addition_time
+    if (control_dist_km == brevet_dist_km):
+        total_time += fix_end[str(control_dist_km)]
+    
+    else: 
+    # go to each pair in dictionary
+        for i in range (len(time_dic)):
+            if (control_point[i] <= brevet_dist_km):            # check whether the user input is the total distance of the brevet
+                if (control_point[i] <= control_dist_km):  # check the key value of the pair
+                    control_time += time_dic[str(control_point[i])]         # add the the value of that key to the total_time. #This method is quite redundent, since it have to loop in 5 brevet_dist_km every time.    
+                    
+                else:
+                    addition_time = (control_dist_km - control_point[i-1]) / speed_dic[str(control_point[i])]
+                total_time = control_time + addition_time
+            #total_time = control_time + addition_time
+            #print ("This is total time: "+ str(total_time))
+            
             # end of adding time when reach the brevet_dist_km, as long as reach the brevet_dist_km, do nothing to the data.
-      elif (control_dist_km == brevet_dist_km):
-          total_time = overall_time_dic.value()[i]
-    control_close = brevet_start_time + timedelta(hours=total_time)
+    #take starttime, turn to the arrow object,
+    close_t = arrow.get(brevet_start_time)
+    control_close = close_t.shift(hours=+total_time)
+    control_close.isoformat()
+
     return control_close
+
