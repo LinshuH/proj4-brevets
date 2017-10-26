@@ -135,7 +135,9 @@
     var begin_time = $("#begin_time").val();
 
     console.log("This is begin_date: "+begin_date+ " ; this is begin_time: "+begin_time);
-    var brevet_start_time = moment(begin_date + ' ' + begin_time+ ":00").format();
+    var brevet_start_time = begin_date + 'T' + begin_time+ ":00"+"-07:00"; //daylight saving 
+    //var brevet_start_time = moment(begin_date + ' ' + begin_time).format("YYYY-MM-DD HH:MM");
+   
     console.log("This is brevet_start_time "+brevet_start_time);
     
     /*The things I want to get is acutally only the value, so I don't need to care about combining key together, 

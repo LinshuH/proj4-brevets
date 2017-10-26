@@ -54,10 +54,10 @@ def open_time(control_dist_km, brevet_dist_km, brevet_start_time):
     
     #take starttime, turn to the arrow object,
     open_t = arrow.get(brevet_start_time)
+    print ("This is open_t: ", open_t.isoformat())
     control_open = open_t.shift(hours=+total_time)
-    control_open.isoformat()
 
-    return control_open
+    return control_open.isoformat()
 
 
 def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
@@ -101,7 +101,6 @@ def close_time(control_dist_km, brevet_dist_km, brevet_start_time):
     #take starttime, turn to the arrow object,
     close_t = arrow.get(brevet_start_time)
     control_close = close_t.shift(hours=+total_time)
-    control_close.isoformat()
 
-    return control_close
+    return control_close.isoformat()
 

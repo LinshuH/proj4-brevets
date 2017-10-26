@@ -18,6 +18,7 @@ import logging
 app = flask.Flask(__name__)
 CONFIG = config.configuration()
 app.secret_key = CONFIG.SECRET_KEY
+print("Secret key is {}".format(app.secret_key))
 
 ###
 # Pages
@@ -27,14 +28,14 @@ app.secret_key = CONFIG.SECRET_KEY
 @app.route("/")
 @app.route("/index")
 def index():
-    app.logger.debug("Main page entry")
+    app.logger.info("Main page entry")
     return flask.render_template('calc.html')
 
 
 @app.errorhandler(404)
 def page_not_found(error):
-    app.logger.debug("Page not found")
-    flask.session['linkback'] = flask.url_for("index")
+    app.logger.info("Page not found")
+    #flask.session['linkback'] = flask.url_for("index")
     return flask.render_template('404.html'), 404
 
 
@@ -51,10 +52,10 @@ def _calc_times():
     described at https://rusa.org/octime_alg.html.
     Expects one URL-encoded argument, the number of miles.
     """
-    app.logger.debug("Got a JSON request")
-    km = request.args.get('km', 999, type=float)   # control_disk_km
-    brevet_dist_km = request.args.get("brevet_dist_km", type=float)
-    brevet_start_time = request.args.get("brevet_start_time", type=str)   # Q: Is String the correct type?
+    app.logger.info("Got a JSON request")
+    km = request.args.get('km', 0, type=float)   # control_disk_km
+    brevet_dist_km = request.args.get("brevet_dist_km",0,type=float)
+    brevet_start_time = request.args.get("brevet_start_time","2017-01-01T00:00:00",type=str)   # Q: Is String the correct type?
     app.logger.debug("km={}".format(km))
     app.logger.debug("brevet_dist_km={}".format(brevet_dist_km))
     app.logger.debug("brevet_start_time={}".format(brevet_start_time))
@@ -64,6 +65,7 @@ def _calc_times():
     open_time = acp_times.open_time(km, brevet_dist_km, brevet_start_time)
     close_time = acp_times.close_time(km, brevet_dist_km, brevet_start_time)
     result = {"open": open_time, "close": close_time}
+    app.logger.debug("Sending results: {}".format(result))
     return flask.jsonify(result=result)
 
 
@@ -71,7 +73,10 @@ def _calc_times():
 
 app.debug = CONFIG.DEBUG
 if app.debug:
+    app.logger.info("app.debug was set")
     app.logger.setLevel(logging.DEBUG)
+else: 
+    app.logger.info("app.debug was not set")
 
 if __name__ == "__main__":
     print("Opening for global access on port {}".format(CONFIG.PORT))
