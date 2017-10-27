@@ -125,7 +125,8 @@
   function calc_times(control) {
     // get the user input
     var km = control.find("input[name='km']").val();                         // get the id km, even though we also has data in unit miles, we only pass the km to the python file.
-    var brevet_dist_km = control.find("input[name='brevet_dist_km']").val(); //dropdown list
+    var brevet_dist_km = $("#brevet_dist_km").val(); //dropdown list
+    console.log("This is brevet_dist_km: " + brevet_dist_km);
     // create a new timestamp key(id) at here, which combine date and time key together. then, on the next line, shows this key.
 
     //var begin_date = control.find("input[name='begin_date']").val();
@@ -133,7 +134,6 @@
 
     var begin_date = $("#begin_date").val();
     var begin_time = $("#begin_time").val();
-
     console.log("This is begin_date: "+begin_date+ " ; this is begin_time: "+begin_time);
     var brevet_start_time = begin_date + 'T' + begin_time+ ":00"+"-07:00"; //daylight saving 
     //var brevet_start_time = moment(begin_date + ' ' + begin_time).format("YYYY-MM-DD HH:MM");
@@ -149,14 +149,17 @@
     // I believe this is the data that get from the python file
     var open_time_field = control.find("input[name='open']");
     var close_time_field = control.find("input[name='close']");
-    
-    $.getJSON(TIME_CALC_URL, { km: km, brevet_dist_km: brevet_dist_km, brevet_start_time: brevet_start_time},
+    console.log(km);
+    console.log(brevet_dist_km);
+    console.log(brevet_start_time);
+    $.getJSON("/_calc_times", { km: km, brevet_dist_km: brevet_dist_km, brevet_start_time: brevet_start_time},
       // anythings on the line above are the data that sand to the server(py file) and any thing in the function(data), data are the information get back to the client.
       // on the {km:km} the first km is the id of the variable(defined in html with id = ..., and second km is the value, that defined at line 127
       function(data) {
          var times = data.result;   // times is the data get from the flask_brevests.py
-         console.log("Got a response: " +  times);
+         console.log("Got a response: " +  JSON.stringify(times));
          console.log("Response.open = " + times.open);
+	 console.log("moment time: " + moment(times.open));
          open_time_field.val( moment(times.open).format("ddd M/D H:mm"));
          close_time_field.val( moment(times.close).format("ddd M/D H:mm"));
        } // end of handler function
@@ -167,6 +170,7 @@
    // Do the following when the page is finished loading
    // following functions are get the input(either miles/km), and transfer from this unit to another unit.
    // no matter miles or km is the input, another unit id will also has the corresponding value.
+ 
 
       $('input[name="miles"]').change(
          function() {
